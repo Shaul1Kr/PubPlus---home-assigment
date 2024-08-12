@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { users, statusEnum } from "./schema"; // Adjust the path to your schema file
+import { users, statusEnum } from "./schema";
 import { Client } from "pg";
 import bcrypt from "bcrypt";
 import { randomInt } from "crypto"; // Use crypto to generate a random number
