@@ -3,7 +3,7 @@ import { Client } from "pg";
 import * as schema from "./models/schema";
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DB_URL,
 });
 
 export const connectToDatabase = async () => {
