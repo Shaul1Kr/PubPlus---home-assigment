@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { statusEnum, users } from "../models/drizzle/schema";
 import { db } from "../models/drizzle/db";
 import { and, eq, ilike, like } from "drizzle-orm";
+import { IGetUserAuthInfoRequest } from "../middleware/auth";
 
 type Status = "Working" | "Working Remotely" | "On Vacation" | "Business Trip";
 
@@ -33,12 +34,15 @@ export const updateUserStatus = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response
+) => {
   try {
     console.log("Fatching all users");
-
+    const { id } = req.user as { id: string };
     const users = await db.query.users.findMany();
-    return res.json(users);
+    return res.json({ users, id });
   } catch (error) {
     console.error("Error fetching users:", error);
     return res.status(500).json({ message: "Internal server error" });

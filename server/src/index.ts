@@ -2,9 +2,11 @@ import express from "express";
 import { client, db } from "./models/drizzle/db";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { resolve } from "path";
+import cookieParser from "cookie-parser";
 import api from "./routes/api";
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use("/api", api);
 
