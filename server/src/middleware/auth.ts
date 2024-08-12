@@ -1,9 +1,10 @@
 import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { User } from "../type";
 
 // Define the interface for the request including the user
 export interface IGetUserAuthInfoRequest extends Request {
-  user?: JwtPayload | string;
+  user?: User;
 }
 
 // Middleware function to verify JWT token
@@ -24,7 +25,7 @@ export default function verifyToken(
       if (err) {
         return res.status(401).json({ message: "Token verification failed" });
       }
-      req.user = decoded;
+      req.user = decoded as User;
       next();
     }
   );

@@ -27,9 +27,13 @@ export const login = async (req: Request, res: Response) => {
         .status(401)
         .json({ message: "username or password are incorrect" });
     }
-    const token = jwt.sign({ id: user.uid }, process.env.JWT_SECRET!, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user.uid, username: user.username, status: user.status },
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: "24h",
+      }
+    );
     return res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)

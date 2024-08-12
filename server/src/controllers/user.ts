@@ -13,18 +13,27 @@ const validStatuses: Status[] = [
   "Business Trip",
 ];
 
-export const updateUserStatus = async (req: Request, res: Response) => {
+export const updateUserStatus = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response
+) => {
   try {
-    const { username, status } = req.body;
-    console.log(
-      `Updating user status with username: ${username} and status: ${status}`
-    );
-    if (!Object.values(statusEnum).includes(status))
+    const { status } = req.body;
+    console.log(`Updating user status: ${status}`);
+
+    if (!Object.values(validStatuses).includes(status)) {
+      console.error("Invalid status");
       return res.status(400).json({ message: "Invalid status" });
+    }
+    if (!req.user) {
+      console.error("No user provided");
+      return res.status(400).json({ message: "No user provided" });
+    }
     const user = await db
       .update(users)
       .set({ status })
-      .where(eq(users.username, username));
+      .where(eq(users.uid, req.user.id));
+
     return res
       .status(200)
       .json({ message: "Status updated successfully", user });
@@ -40,9 +49,8 @@ export const getAllUsers = async (
 ) => {
   try {
     console.log("Fatching all users");
-    const { id } = req.user as { id: string };
     const users = await db.query.users.findMany();
-    return res.json({ users, id });
+    return res.json({ users });
   } catch (error) {
     console.error("Error fetching users:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -70,6 +78,19 @@ export const filterUsersByStatus = async (req: Request, res: Response) => {
     return res.status(200).json(usersFiltered);
   } catch (error) {
     console.error("Error filtering users by status:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getUserData = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response
+) => {
+  try {
+    console.info(`Retriving user data`);
+    return res.status(200).json(req.user);
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
