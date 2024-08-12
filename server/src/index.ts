@@ -1,23 +1,25 @@
 import express from "express";
-import { connectToDatabase } from "./db"; // Adjust the path to your db.ts file
+import { client, db } from "./models/drizzle/db";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { resolve } from "path";
+import api from "./routes/api";
 
 const app = express();
+app.use(express.json());
+app.use("/api", api);
 
 const PORT = process.env.PORT || 3000;
 
 // Initialize database connection and start server
-const startServer = async () => {
-  await connectToDatabase(); // Wait for the database to connect
-
-  // Middleware and routes setup here
-  app.use(express.json());
-
-  app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  try {
+    await client.connect();
+    await migrate(db, {
+      migrationsFolder: resolve(__dirname, "./models/drizzle"),
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
     console.log(`Server is running on http://localhost:${PORT}`);
-  });
-};
-
-startServer().catch((err) => {
-  console.error("Failed to start server:", err);
-  process.exit(1); // Exit if server fails to start
+  }
 });
