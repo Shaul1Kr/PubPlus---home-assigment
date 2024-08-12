@@ -1,8 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, uuid, pgEnum } from "drizzle-orm/pg-core";
 
-// Enum definition for status
-const StatusEnum = pgEnum("status", [
+export const statusEnum = pgEnum("status", [
   "Working",
   "Working Remotely",
   "On Vacation",
@@ -16,5 +15,5 @@ export const users = pgTable("users", {
     .primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  status: StatusEnum("status").default("Working").notNull(),
+  status: statusEnum("status").default("Working").notNull(),
 });

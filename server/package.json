@@ -10,10 +10,12 @@
     "build": "tsc",
     "dev": "node --env-file=.env --watch -r ts-node/register src/index.ts",
     "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "migrate": "drizzle-kit migrate",
+    "seeding": "npx ts-node src/db/seed.ts"
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.6",
@@ -22,6 +24,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "drizzle-orm": "^0.33.0",
     "express": "^4.19.2",
     "pg": "^8.12.0",

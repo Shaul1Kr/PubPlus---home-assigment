@@ -1,5 +1,5 @@
 {
-  "id": "f7242c72-f420-4ff1-875c-e2c0de6509cf",
+  "id": "16d6bbee-40cb-45a9-8638-0661ddc582e8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,7 +50,18 @@
       }
     }
   },
-  "enums": {},
+  "enums": {
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "Working",
+        "Working Remotely",
+        "On Vacation",
+        "Business Trip"
+      ]
+    }
+  },
   "schemas": {},
   "_meta": {
     "columns": {},
