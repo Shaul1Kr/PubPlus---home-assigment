@@ -16,9 +16,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   try {
     await client.connect();
-    await migrate(db, {
-      migrationsFolder: resolve(__dirname, "./models/drizzle"),
-    });
   } catch (error) {
     console.error(error);
   } finally {

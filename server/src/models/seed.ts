@@ -6,8 +6,7 @@ import { randomInt } from "crypto"; // Use crypto to generate a random number
 
 // Initialize Drizzle ORM
 const client = new Client({
-  connectionString:
-    "postgres://postgres:mysecretpassword@localhost:5431/PubPlus",
+  connectionString: "postgres://postgres:password@localhost:5431",
 });
 
 // Function to generate a random password
@@ -35,7 +34,12 @@ const seedUsers = async () => {
         status: statusEnum.enumValues[randomStatusIndex],
       });
     }
-
+    const hashpassword = await bcrypt.hash("1234", 10);
+    userRecords.push({
+      username: "user",
+      password: hashpassword,
+      status: statusEnum.enumValues[0],
+    });
     // Insert users into the database
     await db.insert(users).values(userRecords);
     console.log("10 users have been created successfully.");
