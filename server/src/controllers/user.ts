@@ -88,7 +88,17 @@ export const getUserData = async (
 ) => {
   try {
     console.info(`Retriving user data`);
-    return res.status(200).json(req.user);
+    if (!req.user) return res.status(404).json({ message: "User not found" });
+    const user = await db.query.users.findFirst({
+      where: eq(users.uid, req.user.id),
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const userData = {
+      uid: user.uid,
+      username: user.username,
+      status: user.status,
+    };
+    return res.status(200).json(userData);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
