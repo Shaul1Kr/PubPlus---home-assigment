@@ -3,7 +3,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const formSchema = z.object({
   username: z.string(),
@@ -32,30 +42,48 @@ const Login: React.FC<IloginProps> = ({}) => {
   }
 
   return (
-    <div>
-      <h2>Welcome to MyWorkStatus</h2>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <label htmlFor="user name">Username</label>
-        <div>
-          <input
-            placeholder="My Username"
-            {...form.register("username", {
-              required: "this field is required",
-            })}
-          />
-        </div>
-        <label htmlFor="password">Password</label>
-        <div>
-          <input
-            type="password"
-            placeholder="My Password"
-            {...form.register("password", {
-              required: "this field is required",
-            })}
-          />
-        </div>
-        <Button type="submit">Submit</Button>
-      </form>
+    <div className="flex w-screen h-screen justify-center items-center">
+      <Card className="w-80">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 mb-4"
+            >
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>User Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My Username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My Password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Submit</Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
