@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   username: z.string(),
@@ -53,7 +54,7 @@ const Login: React.FC<IloginProps> = ({}) => {
             })}
           />
         </div>
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </form>
     </div>
   );
