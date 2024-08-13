@@ -15,7 +15,6 @@ export async function loader(): Promise<LoaderData> {
 const HomePage = () => {
   const { users } = useLoaderData() as LoaderData;
   const user = useUser();
-  console.log({ users, user });
 
   const [status, setStatus] = useState(user.status);
 
