@@ -31,6 +31,10 @@ export async function loader(): Promise<LoaderData> {
 
 const HomePage = () => {
   const { users } = useLoaderData() as LoaderData;
+  const [stausFilter, setStatusFilter] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
+
   const user = useUser();
 
   const [status, setStatus] = useState(user.status);
@@ -43,17 +47,30 @@ const HomePage = () => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+    setSearch(event.target.value);
+    fetchUsers(event.target.value, stausFilter);
   };
 
   const handleFilterChange = (value: string) => {
-    console.log(value);
+    if (value === "All") return setFilteredUsers(users);
+    setStatusFilter(value);
+    fetchUsers(search, value);
+  };
+
+  const fetchUsers = async (search: string, filter: string) => {
+    const response = await axios.post("/api/user/users/filter", {
+      search,
+      status: filter,
+    });
+
+    setFilteredUsers(response.data);
+    setCurrentPage(1); // Reset to first page when search or filter changes
   };
 
   // Pagination logic
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   // Page change handler
   const handlePageChange = (page: number) => {
@@ -61,11 +78,11 @@ const HomePage = () => {
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   return (
     <div>
-      {!users ? (
+      {!filteredUsers ? (
         <h1>loading</h1>
       ) : (
         <div className="grid w-screen h-screen justify-center items-center content-center gap-12">
@@ -100,9 +117,10 @@ const HomePage = () => {
               />
               <Select onValueChange={handleFilterChange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={status} />
+                  <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="All">All</SelectItem>
                   <SelectItem value="Working">Working</SelectItem>
                   <SelectItem value="Working Remotely">
                     Working Remotely
@@ -112,7 +130,7 @@ const HomePage = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Table>
+            <Table className="border border-indigo-600">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Employees Name</TableHead>

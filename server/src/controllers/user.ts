@@ -63,18 +63,25 @@ export const filterUsersByStatus = async (req: Request, res: Response) => {
     console.log(
       `Fetching users with status: ${status} and search term: ${search}`
     );
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
+    let usersFiltered;
+    if (status === "") {
+      usersFiltered = await db
+        .select()
+        .from(users)
+        .where(like(users.username, `%${search}%`));
+    } else {
+      usersFiltered = await db
+        .select()
+        .from(users)
+        .where(
+          and(
+            eq(users.status, status as Status),
+            like(users.username, `%${search}%`)
+          )
+        );
     }
-    const usersFiltered = await db
-      .select()
-      .from(users)
-      .where(
-        and(
-          eq(users.status, status as Status),
-          like(users.username, `%${search}%`)
-        )
-      );
+    console.log({ usersFiltered, status });
+
     return res.status(200).json(usersFiltered);
   } catch (error) {
     console.error("Error filtering users by status:", error);
