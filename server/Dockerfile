@@ -1,25 +1,16 @@
-# Development stage
-FROM node:16-alpine as development
+FROM node:14.16.0-slim
 
-WORKDIR /usr/src/app
-
-COPY package*.json .
-
-RUN npm install
+WORKDIR /app
 
 COPY . .
 
-FROM node:16-alpine as production
+RUN npm install
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+RUN npm run build
 
-WORKDIR /usr/src/app
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
+RUN chmod +x /wait
 
-COPY package*.json .
+EXPOSE 3000
 
-RUN npm ci --only=production
-
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/src/index.js"]
+CMD /wait && npm start
