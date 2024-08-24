@@ -1,8 +1,10 @@
 import axios from "axios";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { Outlet, useLoaderData } from "react-router-dom";
 
-const userContext = createContext<User | null>(null);
+const userContext = createContext<
+  (User & { updatUserStatus: (value: string) => void }) | null
+>(null);
 
 const useUser = () => {
   const user = useContext(userContext);
@@ -17,10 +19,15 @@ export async function loader() {
 }
 
 const UserProvider = () => {
-  const user = useLoaderData() as User;
+  const userData = useLoaderData() as User;
+  const [user, setUser] = useState(userData);
+  const updatUserStatus = (status: string) => {
+    axios.post("/api/user/update-status", { status });
+    setUser((prev) => ({ ...prev, status }));
+  };
 
   return (
-    <userContext.Provider value={user}>
+    <userContext.Provider value={{ ...user, updatUserStatus }}>
       <Outlet />
     </userContext.Provider>
   );

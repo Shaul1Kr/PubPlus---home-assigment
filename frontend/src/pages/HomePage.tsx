@@ -37,14 +37,8 @@ const HomePage = () => {
 
   const user = useUser();
 
-  const [status, setStatus] = useState(user.status);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-
-  const handleStatusChange = async (value: string) => {
-    setStatus(value);
-    await axios.post("/api/user/update-status", { status: value });
-  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -93,9 +87,9 @@ const HomePage = () => {
             <Label className="font-bold text-xl">
               Update My Current Status:
             </Label>
-            <Select onValueChange={handleStatusChange}>
+            <Select onValueChange={user.updatUserStatus}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={status} />
+                <SelectValue placeholder={user.status} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Working">Working</SelectItem>
