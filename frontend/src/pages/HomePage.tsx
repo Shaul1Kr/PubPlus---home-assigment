@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { useUser } from "../provider/UserProvider";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import {
   Select,
@@ -31,7 +31,7 @@ export async function loader(): Promise<LoaderData> {
 
 const HomePage = () => {
   const { users } = useLoaderData() as LoaderData;
-  const [stausFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
 
@@ -40,9 +40,18 @@ const HomePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
+  useEffect(() => {
+    // Update the list when the user context changes
+    setFilteredUsers((prevUsers) =>
+      prevUsers.map((u) =>
+        u.uid === user.uid ? { ...u, status: user.status } : u
+      )
+    );
+  }, [user]);
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
-    fetchUsers(event.target.value, stausFilter);
+    fetchUsers(event.target.value, statusFilter);
   };
 
   const handleFilterChange = (value: string) => {
@@ -77,7 +86,7 @@ const HomePage = () => {
   return (
     <div>
       {!filteredUsers ? (
-        <h1>loading</h1>
+        <h1>Loading...</h1>
       ) : (
         <div className="grid w-screen h-screen justify-center items-center content-center gap-12">
           <Label className="font-bold text-xl">
@@ -91,7 +100,7 @@ const HomePage = () => {
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={user.status} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-300">
                 <SelectItem value="Working">Working</SelectItem>
                 <SelectItem value="Working Remotely">
                   Working Remotely
@@ -113,7 +122,7 @@ const HomePage = () => {
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-300">
                   <SelectItem value="All">All</SelectItem>
                   <SelectItem value="Working">Working</SelectItem>
                   <SelectItem value="Working Remotely">
